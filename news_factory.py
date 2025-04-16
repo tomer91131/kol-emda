@@ -3,6 +3,12 @@ import requests
 import os
 from datetime import datetime
 from abc import ABC, abstractmethod
+import json
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
+
 
 class Newsletter(ABC):
     class Article:
@@ -83,7 +89,8 @@ class Haaretz(Newsletter):
 class Ynet(Newsletter):
     def extract_news():
         items = self.soup.find_all('div', class_="AccordionSection")
-        for item in items:
+        for it in items:
+            pass
             
 
 class Walla(Newsletter):
@@ -95,8 +102,18 @@ class Channel14(Newsletter):
         pass
 
 class Israelhayom(Newsletter):
-    def extract_news():
-        pass
+    def extract_news(self):
+        data = json.loads(self.page.text)
+        articles = data["data"]["flashPosts"]
+        for art in articles:
+            news_letter = "Israelhayom"
+            author = art["writer"][0]["name"]
+            publication_date = self.parse_datetime(art["createDate"])
+            url = art["url"]
+            title = art["title"]
+            description = art["body"]
+            self.articles.append(self.Article(-1, news_letter, author, publication_date, url, title, description))
+        
 
 class Kan11(Newsletter):
     def extract_news():
