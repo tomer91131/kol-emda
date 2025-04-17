@@ -87,15 +87,56 @@ class Haaretz(Newsletter):
                                               description=item.find('description').getText()))
 
 class Ynet(Newsletter):
-    def extract_news():
-        items = self.soup.find_all('div', class_="AccordionSection")
-        for it in items:
-            pass
+    def extract_news(self):
+
+        options = Options()
+        driver = webdriver.Chrome(options=options)
+        driver.get(self.url)
+        time.sleep(2)
+        AccordionSections = driver.find_elements(By.CLASS_NAME, "AccordionSection")
+        for section in AccordionSections:
+            try:
+                # Scroll to the element (optional but helps sometimes)
+                driver.execute_script("arguments[0].scrollIntoView();", section)
+                button = section.find_element(By.CLASS_NAME, "title")
+                # Click to expand the section
+                button.click()
+                time.sleep(1)  # wait for content to load after click
+
+                # Parse updated HTML with BeautifulSoup
+                soup = BeautifulSoup(driver.page_source, "html.parser")
+
+                # Get the itemBody inside the currently opened section
+                date = section.find_element(By.CLASS_NAME, "DateDisplay").get_attribute('datetime')
+                url = 'https://www.ynet.co.il/news/article/' + section.get_attribute('id')
+                title = section.text
+                indx = title[::-1].find('\n')
+                author = title[-indx::]
+                description = section.find_element(By.CLASS_NAME, "itemBody").text
+                self.articles.append(self.Article(-1,"Ynet", author, self.parse_datetime(date), url, title, description))
+
+            except Exception as e:
+                continue
+    
+        driver.quit()
+        
             
 
 class Walla(Newsletter):
-    def extract_news():
-        pass
+    def extract_news(self):
+        sections = self.soup.find_all('section', class_='css-3mskgx')
+        for sec in sections:
+            title = sec.find('h1', class_='breaking-item-title').getText()
+            title = title[title.find('/')+1::]
+            url = 'https://news.walla.co.il/' + sec.find('a').attrs['href']
+            description = sec.find('p', class_='article_speakable').text
+            author = sec.find('div', class_='writer-name-item')
+            hour, minut  = map(int, sec.find('span', class_='red-time').text.split(':'))
+            now = datetime.now()
+            time = datetime(now.year, now.month, now.day, hour, minut)
+            if not author:
+                author = sec.find('p', class_='content-provider-text')
+            self.articles.append(self.Article(-1, "Walla", author, time, url, title, description))
 
 class Channel14(Newsletter):
     def extract_news():
@@ -106,13 +147,12 @@ class Israelhayom(Newsletter):
         data = json.loads(self.page.text)
         articles = data["data"]["flashPosts"]
         for art in articles:
-            news_letter = "Israelhayom"
             author = art["writer"][0]["name"]
             publication_date = self.parse_datetime(art["createDate"])
             url = art["url"]
             title = art["title"]
             description = art["body"]
-            self.articles.append(self.Article(-1, news_letter, author, publication_date, url, title, description))
+            self.articles.append(self.Article(-1, "IsraelHayom", author, publication_date, url, title, description))
         
 
 class Kan11(Newsletter):
