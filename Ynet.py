@@ -1,4 +1,4 @@
-import Newsletter
+from Newsletter import Newsletter
 from bs4 import BeautifulSoup
 import requests
 

@@ -1,8 +1,8 @@
-import Walla
-import Ynet
-import Haaretz
-import IsraelHayom
-import Newsletter
+from Walla import Walla
+from Ynet import Ynet
+from Haaretz import Haaretz
+from IsraelHayom import IsraelHayom
+from Newsletter import Newsletter
 
 
 
@@ -22,6 +22,11 @@ class NewsFactory:
             "Walla": "https://news.walla.co.il/breaking",
             "IsraelHayom": "https://www.israelhayom.co.il/flash-posts-manage-api/flash_post_data?from=0&size=20&viewScope=newsflash"
         }
+        if news_letter_name == "all":
+            stand = []
+            for key in newsletter_dict:
+                stand.append(newsletter_dict[key](urls[key], key+'.txt'))
+            return stand
         return newsletter_dict[news_letter_name](urls[news_letter_name], filename)
 
 

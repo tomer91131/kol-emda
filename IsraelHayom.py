@@ -1,4 +1,4 @@
-import Newsletter
+from Newsletter import Newsletter
 import json
 
 

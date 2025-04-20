@@ -76,7 +76,7 @@ class Newsletter(ABC):
         DB_NAME = "kol_emda"
         TABLE_NAME = "articles"
 
-        conn = mysql.connector(**config)
+        conn = mysql.connector.connect(**config)
         cursor = conn.cursor()
         cursor.execute(f"USE {DB_NAME}")
 
@@ -88,6 +88,7 @@ class Newsletter(ABC):
                         description = VALUES(description);"""
             cursor.execute(query, (art.news_letter, art.author, art.publication_date, art.url, art.title, art.description))
         
+        conn.commit()
         cursor.close()
         conn.close()
 
