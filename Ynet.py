@@ -3,17 +3,17 @@ from bs4 import BeautifulSoup
 import requests
 
 class Ynet(Newsletter):
-    def strip(self, s: str) -> str: 
-        return s.strip('[]CDAT ')
+    # def strip(self, s: str) -> str: 
+    #     return s.strip('[]CDAT ')
     
     def extract_news(self):
         soup = BeautifulSoup(self.page.text, 'xml')
         items = soup.find_all('item')
 
         for item in items:
-            url = self.strip(item.find('link').text)
-            title = self.strip(item.find('title').text)
-            publication_date = self.parse_datetime(self.strip(item.find('pubDate').text))
+            url = item.find('link').text
+            title = item.find('title').text
+            publication_date = self.parse_datetime(item.find('pubDate').text)
             newpage = requests.get(url)
             newsoup = BeautifulSoup(newpage.text, 'html.parser')
             author = newsoup.find('div', class_='authors').text
