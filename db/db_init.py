@@ -53,6 +53,23 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
 cursor.execute(create_table_query)
 print(f"Table '{TABLE_NAME}' created successfully in database '{DB_NAME}'.")
 
+# Create the triplets table
+create_triplets_table = """
+CREATE TABLE IF NOT EXISTS triplets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    article1_id INT NOT NULL,
+    article2_id INT NOT NULL,
+    article3_id INT NOT NULL,
+    score FLOAT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (article1_id) REFERENCES articles(id),
+    FOREIGN KEY (article2_id) REFERENCES articles(id),
+    FOREIGN KEY (article3_id) REFERENCES articles(id)
+);
+"""
+cursor.execute(create_triplets_table)
+conn.commit()
+
 # Cleanup
 cursor.close()
 conn.close()

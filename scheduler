@@ -1,0 +1,11 @@
+import schedule
+import time
+import match_script
+
+schedule.every(4).hours.do(match_script.update_database)
+schedule.every(4).hours.do(match_script.match_titles)
+
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
