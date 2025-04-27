@@ -1,0 +1,5 @@
+*.txt
+*.pyc
+*.json
+.DS_Store
+hebrew resources/Hebrew-Resources/

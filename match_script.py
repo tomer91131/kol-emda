@@ -113,7 +113,7 @@ def match_titles() -> list[tuple]:
         for j in range(i):
             title1, title2 = all_titles[i], all_titles[j]
             score = score_similarity(title1, title2)
-            if title1[2] == title2[2]: #if the same newsletter : give it a bad score
+            if title1[1] == title2[1]: #if the same newsletter : give it a bad score
                 score = 0
             # store it twice for easy access
             all_vs_all_scores[(title1, title2)] = score
@@ -150,6 +150,6 @@ def match_titles() -> list[tuple]:
     insert_triplets(top_triplets)
 
 
-# if __name__ == '__main__':
-#     update_database()
-#     match_titles()
+if __name__ == '__main__':
+    update_database()
+    match_titles()
