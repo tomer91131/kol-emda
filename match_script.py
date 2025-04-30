@@ -12,7 +12,7 @@ def update_database():
         # paper.dump_to_file()
         paper.insert_articles()
 
-hebrew_stopwords = { "דיווח", "לגבי", "הכל", " "
+hebrew_stopwords = { "דיווח", "לגבי", "הכל", " ", "חדשות"
     "של", "על", "עם", "זה", "זו", "זאת", "הוא", "היא", "הם", "הן", "את",
     "אני", "אתה", "את", "אנחנו", "אתם", "אתן", "יש", "אין", "כן", "לא",
     "כל", "כמו", "אם", "כי", "או", "אבל", "גם", "רק", "עוד", "כבר", "אז",
@@ -61,7 +61,7 @@ def pull_titles(newsletter):
     query = f"""
     SELECT * FROM {TABLE_NAME}
         WHERE newsletter = %s
-        AND datetime >= NOW() - INTERVAL 4 HOUR
+        AND datetime >= NOW() - INTERVAL 12 HOUR
         ORDER BY datetime DESC;
         """
     

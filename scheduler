@@ -2,8 +2,8 @@ import schedule
 import time
 import match_script
 
-schedule.every(4).hours.do(match_script.update_database)
-schedule.every(4).hours.do(match_script.match_titles)
+schedule.every(12).hours.do(match_script.update_database)
+schedule.every(12).hours.do(match_script.match_titles)
 
 
 while True:
