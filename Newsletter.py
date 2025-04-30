@@ -2,7 +2,8 @@ import requests
 import os
 from datetime import datetime
 from abc import ABC, abstractmethod
-import mysql.connector
+import psycopg2
+from dotenv import load_dotenv
 
 class Newsletter(ABC):
     class Article:
@@ -65,27 +66,18 @@ class Newsletter(ABC):
         pass
     
     def insert_articles(self):
-        # Configuration - replace these with your MySQL server info
-        config = {
-            "host": "localhost",
-            "user": "admin",
-            "password": "viva123",
-        }
-
-        # Database and table info
-        DB_NAME = "kol_emda"
-        TABLE_NAME = "articles"
-
-        conn = mysql.connector.connect(**config)
+        load_dotenv()
+        DATABASE_URL = os.getenv('DATABASE_URL')
+        
+        conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor()
-        cursor.execute(f"USE {DB_NAME}")
 
         for art in self.articles:
-            query = f"""INSERT INTO {TABLE_NAME} (newsletter, author, datetime, url, title, description)
+            query = """INSERT INTO articles (newsletter, author, datetime, url, title, description)
                         VALUES (%s, %s, %s, %s, %s, %s)
-                        ON DUPLICATE KEY UPDATE
-                        title = VALUES(title),
-                        description = VALUES(description);"""
+                        ON CONFLICT (url) DO UPDATE
+                        SET title = EXCLUDED.title,
+                            description = EXCLUDED.description;"""
             cursor.execute(query, (art.news_letter, art.author, art.publication_date, art.url, art.title, art.description))
         
         conn.commit()

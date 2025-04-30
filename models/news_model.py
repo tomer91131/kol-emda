@@ -1,18 +1,16 @@
-import mysql.connector
+import psycopg2
 from datetime import datetime
 import random
+import os
+from dotenv import load_dotenv
 
 class NewsModel:
-    def __init__(self, host='localhost', user='admin', password='viva123', database='kol_emda'):
-        self.db_config = {
-            'host': host,
-            'user': user,
-            'password': password,
-            'database': database
-        }
+    def __init__(self):
+        load_dotenv()
+        self.DATABASE_URL = os.getenv('DATABASE_URL')
 
     def get_connection(self):
-        return mysql.connector.connect(**self.db_config)
+        return psycopg2.connect(self.DATABASE_URL)
 
     def _randomize_articles(self, articles):
         """Randomize the order of articles in a triplet"""
@@ -23,7 +21,7 @@ class NewsModel:
     def get_recent_triplets(self, limit=5):
         """Get the most recent triplets of news articles for the game"""
         conn = self.get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
         
         cursor.execute("""
             SELECT t.id, 
@@ -39,7 +37,8 @@ class NewsModel:
             LIMIT %s
         """, (limit,))
         
-        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        results = [dict(zip(columns, row)) for row in cursor.fetchall()]
         cursor.close()
         conn.close()
         
@@ -65,7 +64,7 @@ class NewsModel:
     def get_triplets_for_display(self, limit=10):
         """Get triplets for display in the news comparison tab"""
         conn = self.get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
         
         cursor.execute("""
             SELECT t.id,
@@ -80,7 +79,8 @@ class NewsModel:
             LIMIT %s
         """, (limit,))
         
-        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        results = [dict(zip(columns, row)) for row in cursor.fetchall()]
         cursor.close()
         conn.close()
         

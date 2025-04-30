@@ -1,9 +1,11 @@
 from typing import List, Tuple
 from datetime import datetime, timedelta
-import mysql
+import psycopg2
 from news_factory import NewsFactory
 from itertools import combinations
 from Newsletter import Newsletter
+import os
+from dotenv import load_dotenv
 
 def update_database():
     news_stand: List[Newsletter] = NewsFactory.create_newsletter("all", '')
@@ -45,59 +47,43 @@ def score_similarity(title1: Tuple, title2: Tuple) -> int:
     return score
 
 def pull_titles(newsletter):
-    config = {
-            "host": "localhost",
-            "user": "admin",
-            "password": "viva123",
-        }
-    # Database and table info
-    DB_NAME = "kol_emda"
-    TABLE_NAME = "articles"
-
-    conn = mysql.connector.connect(**config)
+    load_dotenv()
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute(f"USE {DB_NAME}")
 
-    query = f"""
-    SELECT * FROM {TABLE_NAME}
+    query = """
+    SELECT * FROM articles
         WHERE newsletter = %s
-        AND datetime >= NOW() - INTERVAL 12 HOUR
+        AND datetime >= NOW() - INTERVAL '12 hours'
         ORDER BY datetime DESC;
-        """
+    """
     
     cursor.execute(query, (newsletter,))
     sqlres = cursor.fetchall()
-
 
     cursor.close()
     conn.close()
     return sqlres
 
 def insert_triplets(triplets : List[Tuple]):
-    config = {
-            "host": "localhost",
-            "user": "admin",
-            "password": "viva123",
-        }
-    # Database and table info
-    DB_NAME = "kol_emda"
-    TABLE_NAME = "triplets"
-    conn = mysql.connector.connect(**config)
+    load_dotenv()
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-    cursor.execute(f"USE {DB_NAME}")
 
     for triplet in triplets:
         if triplet[3] >= 2:
-            query = f"""INSERT INTO {TABLE_NAME} (article1_id, article2_id, article3_id, score)
+            query = """INSERT INTO triplets (article1_id, article2_id, article3_id, score)
                         VALUES (%s, %s, %s, %s)
                         """
             cursor.execute(query, (triplet[0][0], triplet[1][0], triplet[2][0], triplet[3]))
     
     conn.commit()
-
     cursor.close()
     conn.close()
-
 
 def match_titles() -> list[tuple]:
     titles1 = pull_titles('Haaretz')
@@ -148,7 +134,6 @@ def match_titles() -> list[tuple]:
             # print(f"newsletters: {all_titles[indices[0]][1]}, {all_titles[indices[1]][1]}, {all_titles[indices[2]][1]}")
             # print(f"first title: {all_titles[indices[0]][5]},\n second title: {all_titles[indices[1]][5]},\n third title: {all_titles[indices[2]][5]} \n\n")
     insert_triplets(top_triplets)
-
 
 if __name__ == '__main__':
     update_database()
