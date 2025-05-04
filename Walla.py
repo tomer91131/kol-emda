@@ -24,12 +24,14 @@ class Walla(Newsletter):
             title = sec.find('h1', class_='breaking-item-title').getText()
             title = title[title.find('/')+1::]
             url = 'https://news.walla.co.il' + sec.find('a').attrs['href']
-            description = sec.find('p', class_='article_speakable').text
-            author = (sec.find('div', class_='writer-name-item'))
+            try:
+                description = sec.find('p', class_='article_speakable').getText()
+            except:
+                description = ""
             hour, minut  = map(int, sec.find('span', class_='red-time').text.split(':'))
             article_page = requests.get(url)
             soup_for_date = BeautifulSoup(article_page.text, 'html.parser')
-            date = soup_for_date.find('div', class_='header-titles').text
+            date = soup_for_date.find('div', class_='header-titles').getText()
             date = self.extract_gregorian_date(date)
             time = datetime(int(date[2]),int(date[1]) , int(date[0]), hour, minut)
             if not author:

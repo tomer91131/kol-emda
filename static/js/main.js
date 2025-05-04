@@ -80,7 +80,7 @@ class NewsGame {
                     'Haaretz': 'הארץ',
                     'Ynet': 'ynet',
                     'Walla': 'וואלה',
-                    'Israel Hayom': 'ישראל היום'
+                    'IsraelHayom': 'ישראל היום'
                 }[source] || source;
                 
                 return {

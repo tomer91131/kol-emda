@@ -12,6 +12,3 @@ class NewsController:
         """Get triplets for the news comparison display"""
         return self.model.get_triplets_for_display(limit)
 
-    def check_game_answer(self, triplet_id, selected_source, actual_source):
-        """Check if the user's guess is correct"""
-        return selected_source == actual_source 
