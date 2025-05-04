@@ -29,6 +29,7 @@ class Walla(Newsletter):
             except:
                 description = ""
             hour, minut  = map(int, sec.find('span', class_='red-time').text.split(':'))
+            author = (sec.find('div', class_='writer-name-item'))
             article_page = requests.get(url)
             soup_for_date = BeautifulSoup(article_page.text, 'html.parser')
             date = soup_for_date.find('div', class_='header-titles').getText()
