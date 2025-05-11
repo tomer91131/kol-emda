@@ -26,7 +26,7 @@ class NewsGame {
                 <p class="mb-4">חושבים שאתם יכולים לזהות את המקור החדשותי על פי הכותרת?</p>
                 <div class="game-instructions mb-4">
                     <h4>מהלך המשחק:</h4>
-                    <p>בכל סיבוב יוצגו לכם שלושה מבזקים ממקורות שונים, אם תצליחו לנחש מאיזה מקור מגיעה אחת הכותרות, תזכו בנקודה.</p>
+                    <p>בכל סיבוב יוצג לכם מבזק ממקורות שונים, אם תצליחו לנחש מאיזה מקור מגיעה אחת הכותרות, תזכו בנקודה.</p>
                 </div>
                 <button class="btn btn-primary btn-lg" onclick="game.startGame()">התחל משחק</button>
             </div>
@@ -69,7 +69,8 @@ class NewsGame {
 
         // Get unique sources from the current triplet
         const availableSources = [...new Set(currentTriplet.articles.map(article => article.source))];
-
+        const randomNumber = Math.floor(Math.random() * availableSources.length);
+        const i = 0
         currentTriplet.articles.forEach((article, index) => {
             const articleDiv = document.createElement('div');
             articleDiv.className = 'game-article';
@@ -103,7 +104,11 @@ class NewsGame {
                     ${sourceButtons}
                 </div>
             `;
-            gameContent.appendChild(articleDiv);
+            // present only one random article of the triplet
+            if (i == randomNumber) { 
+                gameContent.appendChild(articleDiv);
+            }
+            i++;
         });
     }
 

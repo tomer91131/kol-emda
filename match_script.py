@@ -75,7 +75,7 @@ def insert_triplets(triplets : List[Tuple]):
     cursor = conn.cursor()
 
     for triplet in triplets:
-        if triplet[3] >= 2:
+        if triplet[3] >= 1.5:
             query = """INSERT INTO triplets (article1_id, article2_id, article3_id, score)
                         VALUES (%s, %s, %s, %s)
                         """
