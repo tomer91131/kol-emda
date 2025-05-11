@@ -70,7 +70,7 @@ class NewsGame {
         // Get unique sources from the current triplet
         const availableSources = [...new Set(currentTriplet.articles.map(article => article.source))];
         const randomNumber = Math.floor(Math.random() * availableSources.length);
-        const i = 0
+        let i = 0;
         currentTriplet.articles.forEach((article, index) => {
             const articleDiv = document.createElement('div');
             articleDiv.className = 'game-article';
@@ -105,7 +105,7 @@ class NewsGame {
                 </div>
             `;
             // present only one random article of the triplet
-            if (i == randomNumber) { 
+            if (i === randomNumber) {
                 gameContent.appendChild(articleDiv);
             }
             i++;
@@ -191,7 +191,7 @@ class NewsComparison {
             `).join('');
 
             tripletDiv.innerHTML = `
-                <div class="row">
+                <div class="row" style="border-bottom: 1px solid #dee2e6; padding-bottom: 1rem;">
                     ${articlesHtml}
                 </div>
             `;
