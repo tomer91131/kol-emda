@@ -77,7 +77,9 @@ class Newsletter(ABC):
                         VALUES (%s, %s, %s, %s, %s, %s)
                         ON CONFLICT (url) DO UPDATE
                         SET title = EXCLUDED.title,
-                            description = EXCLUDED.description;"""
+                            description = EXCLUDED.description,
+                            datetime = EXCLUDED.datetime,
+                            author = EXCLUDED.author;"""
             cursor.execute(query, (art.news_letter, art.author, art.publication_date, art.url, art.title, art.description))
         
         conn.commit()
